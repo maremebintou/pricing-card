@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reusable Pricing Card</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    }
+
+    #cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      width: min(100%, 1080px);
+      justify-items: center;
+    }
+
+    .pricing {
+      width: 100%;
+      max-width: 320px;
+      padding: 28px 24px;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .pricing:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    .price {
+      margin: 0 0 16px;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #15803d;
+    }
+
+    .price span {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .features {
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+    }
+
+    .features li {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .features li:last-child {
+      border-bottom: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2458df;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #1e40af;
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 2px;
+    }
+
+    .btn.is-active {
+      background: #15803d;
+    }
+
+    .message {
+      min-height: 1.4em;
+      margin: 12px 0 0;
+      color: #15803d;
+      font-size: 0.95rem;
+    }
+
+    @media (min-width: 700px) {
+      #cards {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: stretch;
+      }
+
+      .pricing {
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pricing {
+        transition: none;
+      }
+
+      .pricing:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="cards"></main>
+
+  <script>
+    function Card(title, price, features) {
+      const card = document.createElement("article");
+      card.className = "pricing";
+
+      const heading = document.createElement("h2");
+      heading.className = "title";
+      heading.textContent = title;
+
+      const priceElement = document.createElement("p");
+      priceElement.className = "price";
+      const [amount, period] = String(price).split("/");
+      priceElement.append(amount.trim() + " ");
+      const periodEl = document.createElement("span");
+      periodEl.textContent = "/" + (period || "month").trim();
+      priceElement.append(periodEl);
+
+      const list = document.createElement("ul");
+      list.className = "features";
+
+      features.forEach((feature) => {
+        const item = document.createElement("li");
+        item.textContent = feature;
+        list.appendChild(item);
+      });
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn";
+      button.textContent = "Start Trial";
+
+      const message = document.createElement("p");
+      message.className = "message";
+      message.setAttribute("role", "status");
+      message.setAttribute("aria-live", "polite");
+
+      button.addEventListener("click", () => {
+        const started = button.classList.toggle("is-active");
+        button.textContent = started ? "Trial Started" : "Start Trial";
+        message.textContent = started
+          ? "You selected " + title + "!"
+          : "";
+      });
+
+      card.append(heading, priceElement, list, button, message);
+      return card;
+    }
+
+    const plans = [
+      Card("Basic Plan", "$9.99 /month", [
+        "1 GB Storage",
+        "Basic Support",
+        "All Core Features"
+      ]),
+      Card("Pro Plan", "$19.99 /month", [
+        "10 GB Storage",
+        "Priority Support",
+        "Advanced Analytics"
+      ]),
+      Card("Team Plan", "$49.99 /month", [
+        "Unlimited Storage",
+        "24/7 Support",
+        "Team Collaboration"
+      ])
+    ];
+
+    document.getElementById("cards").append(...plans);
+  </script>
+</body>
+</html>
